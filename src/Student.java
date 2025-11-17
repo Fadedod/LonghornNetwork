@@ -9,6 +9,7 @@ public abstract class Student {
     protected double gpa;
     protected List<String> roommatePreferences;
     protected List<String> previousInternships;
+    // Additional attributes can be added as needed
 
     public abstract int calculateConnectionStrength(Student other);
 }
