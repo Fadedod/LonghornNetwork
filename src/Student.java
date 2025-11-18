@@ -1,5 +1,7 @@
 import java.util.*;
 
+// Abstract class representing a student with various attributes
+// and an abstract method to calculate connection strength with another student.
 public abstract class Student {
     protected String name;
     protected int age;
@@ -9,7 +11,9 @@ public abstract class Student {
     protected double gpa;
     protected List<String> roommatePreferences;
     protected List<String> previousInternships;
-    // Additional attributes can be added as 
 
+
+
+    // Find the compatible roommates from a list of students
     public abstract int calculateConnectionStrength(Student other);
 }
