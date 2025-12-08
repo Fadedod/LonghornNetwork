@@ -1,25 +1,84 @@
 import java.util.*;
 
 /**
- * Runs the Gale-Shapley stable matching algorithm for roommate assignment.
+ * Stable roommate matching using Gale-Shapley algorithm.
  */
 public class GaleShapley {
 
     /**
-     * Assigns roommates using Gale-Shapley.
-     *
-     * @param students All students to match.
+     * Assigns roommates based on mutual preference rankings.
      */
     public static void assignRoommates(List<UniversityStudent> students) {
-        // TODO: Implement Gale-Shapley:
-        // 1. Put all free students into a queue.
-        // 2. Track current matches in a Map.
-        // 3. Use a lookup Map for students by name.
-        // 4. While free students remain:
-        //    - A student proposes to the next person on their list.
-        //    - If that person is free, they accept.
-        //    - If not, they keep the preferred partner.
-        //    - The rejected one becomes free again.
-        // 5. Set final roommates at the end.
+        Map<UniversityStudent, UniversityStudent> studentPair = new HashMap<>();
+        Map<UniversityStudent, Integer> indexProposed = new HashMap<>();
+        Map<String, UniversityStudent> studentLookupMap = new HashMap<>();
+
+        // Initialize lookup structures
+        for (UniversityStudent student : students) {
+            studentLookupMap.put(student.name, student);
+            indexProposed.put(student, 0);
+        }
+
+        // Initialize queue with all students
+        Queue<UniversityStudent> unPairedStudent = new LinkedList<>(students);
+
+        // Main matching loop
+        while (!unPairedStudent.isEmpty()) {
+            UniversityStudent proposer = unPairedStudent.poll();
+
+            if (proposer.getRoommate() != null) continue;
+
+            int index = indexProposed.get(proposer);
+            if (index >= proposer.roommatePreferences.size()) continue;
+
+            // Get next preference
+            String candidateName = proposer.roommatePreferences.get(index);
+            indexProposed.put(proposer, index + 1);
+            
+            UniversityStudent candidate = studentLookupMap.get(candidateName);
+
+            // Skip if candidate not found or not interested
+            if (candidate == null) {
+                if (indexProposed.get(proposer) < proposer.roommatePreferences.size()) {
+                    unPairedStudent.add(proposer);
+                }
+                continue;
+            }
+
+            if (!candidate.roommatePreferences.contains(proposer.name)) {
+                if (indexProposed.get(proposer) < proposer.roommatePreferences.size()) {
+                    unPairedStudent.add(proposer);
+                }
+                continue;
+            }
+
+            // Match if candidate is free
+            if (candidate.getRoommate() == null) {
+                studentPair.put(proposer, candidate);
+                studentPair.put(candidate, proposer);
+                proposer.setRoommate(candidate);
+                candidate.setRoommate(proposer);
+            } else {
+                // Check if candidate prefers proposer over current match
+                UniversityStudent currentRoommate = candidate.getRoommate();
+                int currentRoommateIndex = candidate.roommatePreferences.indexOf(currentRoommate.name);
+                int newIndex = candidate.roommatePreferences.indexOf(proposer.name);
+
+                if (newIndex < currentRoommateIndex) {
+                    studentPair.remove(currentRoommate);
+                    currentRoommate.setRoommate(null);
+                    unPairedStudent.add(currentRoommate);
+                    
+                    studentPair.put(proposer, candidate);
+                    studentPair.put(candidate, proposer);
+                    proposer.setRoommate(candidate);
+                    candidate.setRoommate(proposer);
+                } else {
+                    if (indexProposed.get(proposer) < proposer.roommatePreferences.size()) {
+                        unPairedStudent.add(proposer);
+                    }
+                }
+            }
+        }
     }
 }
