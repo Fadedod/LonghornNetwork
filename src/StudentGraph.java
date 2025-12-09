@@ -1,73 +1,102 @@
 import java.util.*;
 
 /**
- * A simple graph that models relationships between students.
- * Each student is a node, and each connection between two students is an edge
- * with a weight showing how strong their relationship is.
+ * Graph structure for modeling student connections based on shared characteristics.
  */
 public class StudentGraph {
 
     /**
-     * Represents a connection from one student to another,
-     * including the strength of that connection.
+     * Edge between two connected students with a weight.
      */
-    public class Edge {
-        public final UniversityStudent neighbor;
-        public final int weight;
-        // TODO: Add a constructor to initialize the neighbor and the weight.
+    public static class Edge {
+        public UniversityStudent neighbor;
+        public int weight;
+
+        /**
+         * Constructs an edge.
+         *
+         * @param neighbor student node
+         * @param weight edge weight
+         */
+        public Edge(UniversityStudent neighbor, int weight) {
+            this.neighbor = neighbor;
+            this.weight = weight;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + neighbor.name + ", " + weight + ")";
+        }
     }
 
-    // Stores each student along with a list of their connected edges.
-    private final Map<UniversityStudent, List<Edge>> adj = new HashMap<>();
+    private Map<UniversityStudent, List<Edge>> adjacencyList;
 
     /**
-     * Builds a graph from a list of students.
-     *
-     * @param students The list of students we want to include in the graph.
+     * Builds the graph by connecting students with positive connection strengths.
+     * 
+     * @param students student list
      */
     public StudentGraph(List<UniversityStudent> students) {
-        // TODO: Build the actual graph here:
-        // 1. Add every student as a node in the adjacency map.
-        // 2. Go through every unique pair of students.
-        // 3. Use s1.calculateConnectionStrength(s2) to measure their connection.
-        // 4. If the strength is positive, add an edge both ways between them.
+        adjacencyList = new HashMap<>();
+
+        for (UniversityStudent s : students) {
+            adjacencyList.put(s, new LinkedList<>());
+        }
+
+        int totalStudents = students.size();
+        for (int i = 0; i < totalStudents; i++) {
+            for (int j = i + 1; j < totalStudents; j++) {
+                UniversityStudent first = students.get(i);
+                UniversityStudent second = students.get(j);
+
+                int connectionWeight = first.calculateConnectionStrength(second);
+                
+                if (connectionWeight > 0) {
+                    addEdge(first, second, connectionWeight);
+                }
+            }
+        }
     }
 
     /**
-     * Connects two students with an undirected, weighted edge.
-     *
-     * @param s1     One of the students.
-     * @param s2     The other student.
-     * @param weight How strong their relationship is.
-     */
-    public void addEdge(UniversityStudent s1, UniversityStudent s2, int weight) {
-        // TODO: Add the connection from s1 → s2 and from s2 → s1 in the adjacency list.
-    }
-
-    /**
-     * Returns all edges (connections) for the given student.
-     *
-     * @param student The student whose connections we want.
-     * @return A list of edges showing who they're connected to.
-     */
-    public List<Edge> getNeighbors(UniversityStudent student) {
-        return adj.getOrDefault(student, Collections.emptyList());
-    }
-
-    /**
-     * Returns every student in the graph.
-     *
-     * @return A set containing all students (nodes).
-     */
-    public Set<UniversityStudent> getAllNodes() {
-        return adj.keySet();
-    }
-
-    /**
-     * Prints out the graph in a readable way.
-     * Useful for debugging or visualizing how students are connected.
+     * Prints graph connections to console.
      */
     public void displayGraph() {
-        // TODO: Loop through all students and print out their connections.
+        System.out.println("\nStudent Graph:");
+        
+        for (UniversityStudent s : getAllNodes()) {
+            System.out.println(s.name + " -> " + adjacencyList.get(s));
+        }
+    }
+
+    /**
+     * Creates bidirectional edge between students.
+     *
+     * @param studentA first node
+     * @param studentB second node
+     * @param weight edge weight
+     */
+    private void addEdge(UniversityStudent studentA, UniversityStudent studentB, int weight) {
+        adjacencyList.get(studentA).add(new Edge(studentB, weight));
+        adjacencyList.get(studentB).add(new Edge(studentA, weight));
+    }
+
+    /**
+     * Retrieves adjacent nodes for a student.
+     *
+     * @param student target student
+     * @return neighbor list
+     */
+    public List<Edge> getNeighbors(UniversityStudent student) {
+        return adjacencyList.get(student);
+    }
+
+    /**
+     * Returns all graph nodes.
+     *
+     * @return student set
+     */
+    public Set<UniversityStudent> getAllNodes() {
+        return adjacencyList.keySet();
     }
 }
