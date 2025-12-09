@@ -1,91 +1,96 @@
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-//Represents a university student, extending the abstract Student class.
-// This class holds specific student data, roommate info, and thread-safe
- //lists for friends and chat
- //history.
- //
 
 public class UniversityStudent extends Student {
-    // Thread-safe list to store friends
-
-    
-// A reference to the student's assigned roommate
     private UniversityStudent roommate;
-    
-    // Thread-safe list for friends
-    private final List<UniversityStudent> friendsList = new CopyOnWriteArrayList<>();
-    
-    // Thread-safe map for chat history
-    private final Map<UniversityStudent, List<String>> chatHistory = new ConcurrentHashMap<>();
+    private ArrayList<String> friends;
+    private Map<String, List<String>> chatHistories;
 
-    /**
-     * Full constructor for UniversityStudent.
-     * Initializes all student properties.
-     */
     public UniversityStudent(String name, int age, String gender, int year, String major, double gpa,
-                             List<String> roommatePreferences, List<String> previousInternships) {
-        // TODO: Assign all parameters to the fields from the 'Student' class.
-        // e.g., this.name = name;
-        this.roommate = null; // Roommate is null until assigned
+                             List<String> roommatePrefs, List<String> previousInterns) {
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+        this.year = year;
+        this.major = major;
+        this.gpa = gpa;
+        this.roommatePreferences = roommatePrefs;
+        this.previousInternships = previousInterns;
+        this.roommate = null;
+        this.friends = new ArrayList<>();
+        this.chatHistories = new HashMap<>();
     }
 
-    /**
-     * Calculates connection strength with another student based on README criteria.
-     *
-     * @param other The other student to compare against.
-     * @return The calculated connection strength.
-     */
+    // --- ADDED GETTERS HERE (Required for GUI) ---
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    public String getMajor() { return major; }
+    // ---------------------------------------------
+
     @Override
     public int calculateConnectionStrength(Student other) {
-        // TODO: Implement the connection strength logic from the README
-        // 1. Check if 'other' is a UniversityStudent.
-        // 2. Check for roommate: +4
-        // 3. Check shared internships: +3 for each
-        // 4. Check same major: +2
-        // 5. Check same age: +1
-        return 0; // Placeholder
+        int connectionStrength = 0;
+        
+        if (!(other instanceof UniversityStudent)) {
+            return connectionStrength;
+        }
+        
+        UniversityStudent otherStudent = (UniversityStudent) other;
+
+        if (this.roommate != null && this.roommate.equals(otherStudent)) {
+            connectionStrength += 4;
+        }
+
+        for (String internship : this.previousInternships) {
+            if (otherStudent.previousInternships.contains(internship)) {
+                connectionStrength += 3;
+            }
+        }
+
+        if (this.major.equals(otherStudent.major)) {
+            connectionStrength += 2;
+        }
+
+        if (this.year == otherStudent.year) {
+            connectionStrength += 1;
+        }
+
+        return connectionStrength;
     }
 
-    // --- Roommate Methods ---
-
-    /**
-     * Gets the currently assigned roommate.
-     * @return The UniversityStudent roommate, or null if unassigned.
-     */
-    public UniversityStudent getRoommate() { return this.roommate; }
-
-    /**
-     * Assigns a roommate to this student.
-     * @param roommate The student to assign as a roommate.
-     */
-    public void setRoommate(UniversityStudent roommate) { this.roommate = roommate; }
-
-    // --- Thread-Safe Methods ---
-
-    /**
-     * Thread-safe method to add a friend.
-     * @param friend The student to add.
-     */
-    public void addFriend(UniversityStudent friend) {
-        // TODO: Implement thread-safe friend adding.
-        // Use `friendsList.addIfAbsent(friend)` or check contains first.
+    public void setRoommate(UniversityStudent roommate) {
+        this.roommate = roommate;
     }
 
-    /**
-     * Thread-safe method to log a chat message.
-     * @param person The person the message is with.
-     * @param message The message content.
-     */
-    public void addChatMessage(UniversityStudent person, String message) {
-        // TODO: Implement thread-safe chat logging.
-        // 1. Use `chatHistory.putIfAbsent(person, ...)` to ensure the list exists.
-        // 2. Get the list and add the message.
+    public UniversityStudent getRoommate() {
+        return roommate;
     }
-    
-    // TODO: Override equals() and hashCode() using the 'name' field,
-    // as names are guaranteed to be unique.
+
+    public void addFriend(String friend) {
+        this.friends.add(friend);
+    }
+
+    public ArrayList<String> getFriends() {
+        return friends;
+    }
+
+    public void removeFriend(String friend) {
+        this.friends.remove(friend);
+    }
+
+    public List<String> getChatHistory(String otherChatter) {
+        return chatHistories.computeIfAbsent(otherChatter, k -> new ArrayList<>());
+    }
+
+    public void addMessage(String otherChatter, String message) {
+        getChatHistory(otherChatter).add(message);
+    }
+
+    public Map<String, List<String>> getChatHistories() {
+        return chatHistories;
+    }
+
+    @Override
+    public String toString() {
+        return name; // Simplified toString for cleaner GUI lists
+    }
 }
-
