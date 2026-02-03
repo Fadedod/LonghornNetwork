@@ -19,7 +19,7 @@ public class LongHornGui extends JFrame {
     private JTextArea historyDisplay;
 
     private List<List<UniversityStudent>> allTestData;
-    private static final Color UT_color = new Color(191, 87, 0);
+    private static final Color BURNT_ORANGE = new Color(191, 87, 0);
 
     public LongHornGui() {
         super("Longhorn Network Lab UI");
@@ -42,7 +42,7 @@ public class LongHornGui extends JFrame {
 
         JTabbedPane tabContainer = new JTabbedPane();
         tabContainer.setBackground(Color.WHITE);
-        tabContainer.setForeground(UT_color);
+        tabContainer.setForeground(BURNT_ORANGE);
         tabContainer.setFont(new Font("Arial", Font.BOLD, 14));
 
         tabContainer.addTab("Test Runner", buildTestPanel());
@@ -55,11 +55,11 @@ public class LongHornGui extends JFrame {
     }
 
     private void configureUITheme() {
-        UIManager.put("ComboBox.selectionBackground", UT_color);
+        UIManager.put("ComboBox.selectionBackground", BURNT_ORANGE);
         UIManager.put("ComboBox.selectionForeground", Color.WHITE);
         UIManager.put("ComboBox.background", Color.WHITE);
         UIManager.put("ComboBox.foreground", Color.BLACK);
-        UIManager.put("Button.background", UT_color);
+        UIManager.put("Button.background", BURNT_ORANGE);
         UIManager.put("Button.foreground", Color.WHITE);
         UIManager.put("Panel.background", Color.WHITE);
     }
@@ -328,7 +328,7 @@ public class LongHornGui extends JFrame {
     }
 
     private void applyButtonStyle(JButton btn) {
-        btn.setBackground(UT_color);
+        btn.setBackground(BURNT_ORANGE);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setFont(new Font("Arial", Font.BOLD, 12));
@@ -381,7 +381,7 @@ public class LongHornGui extends JFrame {
                 }
             }
 
-            g2d.setColor(UT_color);
+            g2d.setColor(BURNT_ORANGE);
             g2d.setStroke(new BasicStroke(3));
             for (UniversityStudent s : studentList) {
                 UniversityStudent partner = s.getRoommate();
@@ -398,7 +398,7 @@ public class LongHornGui extends JFrame {
                 Point pos = positions.get(s);
                 g2d.setColor(Color.WHITE);
                 g2d.fillOval(pos.x - 20, pos.y - 20, 40, 40);
-                g2d.setColor(UT_color);
+                g2d.setColor(BURNT_ORANGE);
                 g2d.setStroke(new BasicStroke(2));
                 g2d.drawOval(pos.x - 20, pos.y - 20, 40, 40);
                 
@@ -442,7 +442,7 @@ public class LongHornGui extends JFrame {
                     g2d.drawLine(xPos + 20, yPos, nextX - 20, yPos);
                 }
 
-                g2d.setColor(UT_color);
+                g2d.setColor(BURNT_ORANGE);
                 g2d.fillOval(xPos - 20, yPos - 20, 40, 40);
                 g2d.setColor(Color.WHITE);
                 g2d.setFont(new Font("Arial", Font.BOLD, 12));
@@ -457,3 +457,4 @@ public class LongHornGui extends JFrame {
         SwingUtilities.invokeLater(() -> new LongHornGui().setVisible(true));
     }
 }
+/////
